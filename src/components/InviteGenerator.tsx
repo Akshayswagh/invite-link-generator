@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { IndicTransliterate } from "@ai4bharat/indic-transliterate";
-import "@ai4bharat/indic-transliterate/dist/index.css";
+
 import { BASE_URL } from "@/config";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
