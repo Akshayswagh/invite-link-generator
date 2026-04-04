@@ -142,3 +142,24 @@
     pointer-events: none;
   }
 }
+
+/* Transliterate suggestion dropdown styles */
+.rtl-input-tool-suggestion-list {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-card) !important;
+  z-index: 50;
+}
+
+.rtl-input-tool-suggestion-list li {
+  padding: 6px 12px !important;
+  font-family: var(--font-devanagari) !important;
+  color: hsl(var(--foreground)) !important;
+  cursor: pointer;
+}
+
+.rtl-input-tool-suggestion-list li:hover,
+.rtl-input-tool-suggestion-list li.active {
+  background: hsl(var(--accent) / 0.2) !important;
+}
