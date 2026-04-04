@@ -1,29 +1,38 @@
 import { useState, useCallback } from "react";
-import { IndicTransliterate } from "@ai4bharat/indic-transliterate";
 
 import { BASE_URL } from "@/config";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Copy, Link, Share2 } from "lucide-react";
+import { useTransliterate } from "@/hooks/use-transliterate";
 
 const PREFIXES = ["श्री.", "सौ.", "चि."] as const;
 
 const InviteGenerator = () => {
   const [prefix, setPrefix] = useState<string>(PREFIXES[0]);
-  const [name, setName] = useState("");
+  const [englishName, setEnglishName] = useState("");
   const [generatedLink, setGeneratedLink] = useState("");
+  const { marathiText, handleInputChange } = useTransliterate();
 
-  const fullName = `${prefix} ${name}`.trim();
+  const displayName = marathiText || englishName;
+  const fullName = `${prefix} ${displayName}`.trim();
+
+  const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setEnglishName(val);
+    handleInputChange(val);
+  };
 
   const generateLink = useCallback(() => {
-    if (!name.trim()) {
+    if (!displayName.trim()) {
       toast.error("कृपया नाव प्रविष्ट करा / Please enter a name");
       return;
     }
     const url = `${BASE_URL}/?guest=${encodeURIComponent(fullName)}`;
     setGeneratedLink(url);
     toast.success("लिंक तयार झाली!");
-  }, [fullName, name]);
+  }, [fullName, displayName]);
 
   const copyLink = useCallback(async () => {
     if (!generatedLink) return;
@@ -91,27 +100,21 @@ const InviteGenerator = () => {
           </div>
         </div>
 
-        {/* Name Input with Transliteration */}
+        {/* Name Input */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">
             नाव टाका (Enter Name)
           </label>
-          <IndicTransliterate
-            value={name}
-            onChangeText={setName}
-            lang="mr"
-            renderComponent={(props: React.InputHTMLAttributes<HTMLInputElement>) => (
-              <input
-                {...props}
-                className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-base text-devanagari ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="Type name in English (e.g. Rahul Patil)"
-              />
-            )}
+          <Input
+            value={englishName}
+            onChange={onNameChange}
+            placeholder="Type name in English (e.g. Rahul Patil)"
+            className="h-11 text-base"
           />
         </div>
 
         {/* Preview */}
-        {name && (
+        {displayName && (
           <div className="rounded-lg bg-muted/50 border border-accent/20 p-4 text-center space-y-1">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Preview</p>
             <p className="text-xl font-semibold text-primary text-devanagari">{fullName}</p>
